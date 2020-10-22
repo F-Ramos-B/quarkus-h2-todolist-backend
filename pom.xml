@@ -64,6 +64,18 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-opentracing</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.opentracing.contrib</groupId>
+      <artifactId>opentracing-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-hibernate-orm-panache</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

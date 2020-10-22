@@ -25,16 +25,34 @@ public class TodoDao {
 	EntityManager em;
 	
 	@Transactional
-	public void inserir(Todo todo) {
+	/**
+	 * Inseri um TODO e retorna o ID criado
+	 * @param todo
+	 * @return
+	 */
+	public Long inserir(Todo todo) {
 		String nomeSql = "INSERIR_TODO";
+//		inserirOuAtualizar(nomeSql, todo);
+		todo.persistAndFlush();
+		return todo.getId();
+	}
+	
+	@Transactional
+	public void atualizar(Todo todo) {
+		String nomeSql = "ATUALIZAR_TODO";
+		inserirOuAtualizar(nomeSql, todo);
+	}
+	@Transactional
+	private void inserirOuAtualizar(String nomeSql, Todo todo) {
 		Query query = em.createNamedQuery(nomeSql);
 		
-//		query.setParameter("id", todo.getId());
+		query.setParameter("id", todo.getId());
 		query.setParameter("nome", todo.getNome());
 		query.setParameter("dataCriacao", todo.getDataCriacao());
-		
 		query.executeUpdate();
+		
 	}
+	
 	
 	public List<Todo> listar(){
 		String nomeConsulta = "CONSULTAR_TODO";
@@ -58,6 +76,35 @@ public class TodoDao {
 		query.setParameter("id", id);
 		
 		query.executeUpdate();
+	}
+	
+	public Boolean isnomeRepetido(String nome) {
+		String nomeSql = "CONSULTAR_NOME_REPETIDO_TODO";
+		Boolean nomeRepetido = Boolean.FALSE;
+		
+		TypedQuery<Todo> query = em
+				.createNamedQuery(nomeSql, Todo.class);
+		
+		query.setParameter("nome", "%"+nome+"%");
+		
+		nomeRepetido = query.getResultList().size() > 0;
+		
+		
+		return nomeRepetido;
+	}
+	public Todo buscarPorId(Long id) {
+		String nomeSql = "CONSULTAR_TODO_ID";
+		Todo todo;
+		TypedQuery<Todo> query = 
+				em
+				.createNamedQuery(nomeSql, Todo.class);
+		query.setParameter("id", id);
+		try {
+			todo = query.getSingleResult();
+		}catch(NoResultException e) {
+			todo = null;
+		}
+		return todo;
 	}
 	
 	

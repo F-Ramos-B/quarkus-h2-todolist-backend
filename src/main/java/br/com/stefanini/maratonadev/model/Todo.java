@@ -2,7 +2,9 @@ package br.com.stefanini.maratonadev.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
 @Table(name="todo")
@@ -23,8 +28,14 @@ import org.hibernate.annotations.CreationTimestamp;
 			+ "INSERT INTO todo (nome, dataCriacao) values "
 			+ "(:nome, :dataCriacao)"),
 	@NamedNativeQuery(name="EXCLUIR_TODO", query = "DELETE todo WHERE id = :id"),
+	@NamedNativeQuery(name="CONSULTAR_NOME_REPETIDO_TODO", query = ""
+			+ "SELECT id, nome, dataCriacao FROM todo where nome like :nome", resultClass = Todo.class),
+	@NamedNativeQuery(name="CONSULTAR_TODO_ID", query = ""
+			+ "SELECT id, nome, dataCriacao FROM todo where id = :id", resultClass = Todo.class),
+	@NamedNativeQuery(name="ATUALIZAR_TODO", query="UPDATE todo "
+			+ "set nome = :nome, dataCriacao = :dataCriacao WHERE id = :id"),
 })
-public class Todo implements Serializable {
+public class Todo extends PanacheEntityBase {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +46,9 @@ public class Todo implements Serializable {
 	
 	@Column(name="dataCriacao", nullable = false, updatable = false)
 	private LocalDateTime dataCriacao;
+	
+	@OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TodoStatus> status;
 
 	public Long getId() {
 		return id;
