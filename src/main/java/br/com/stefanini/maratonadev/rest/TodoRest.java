@@ -29,6 +29,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import br.com.stefanini.maratonadev.dto.TodoDto;
 import br.com.stefanini.maratonadev.model.Todo;
 import br.com.stefanini.maratonadev.service.TodoService;
+import io.quarkus.security.Authenticated;
 
 
 
@@ -36,6 +37,7 @@ import br.com.stefanini.maratonadev.service.TodoService;
 @Path("todo")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+
 public class TodoRest {
 	
 	@Inject

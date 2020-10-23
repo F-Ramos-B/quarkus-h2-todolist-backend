@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import br.com.stefanini.maratonadev.model.dominio.StatusEnum;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -31,14 +33,20 @@ public class TodoStatus extends PanacheEntity {
 	@JoinColumn(name="todo_id", updatable=false)
 	private Todo todo;
 	
+	@Column(name = "data")
+	@UpdateTimestamp
+	private LocalDateTime data;
+	
+	@ManyToOne(optional = false)
+	private User user;
+	
+	
 	TodoStatus(){
 		super();
 	}
 	public TodoStatus(StatusEnum statusEnum){
 		this.status = statusEnum;
 	}
-	
-	private LocalDateTime data;
 
 	public Long getId() {
 		return id;
@@ -63,6 +71,31 @@ public class TodoStatus extends PanacheEntity {
 	public void setData(LocalDateTime data) {
 		this.data = data;
 	}
+	public Todo getTodo() {
+		return todo;
+	}
+	public void setTodo(Todo todo) {
+		this.todo = todo;
+	}
+	@Override
+	public String toString() {
+		//TODO
+		return status.name();
+		
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

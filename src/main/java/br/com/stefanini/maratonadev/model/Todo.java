@@ -45,10 +45,20 @@ public class Todo extends PanacheEntityBase {
 	private String nome;
 	
 	@Column(name="dataCriacao", nullable = false, updatable = false)
+	@CreationTimestamp
 	private LocalDateTime dataCriacao;
+	
 	
 	@OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TodoStatus> status;
+	
+	public Todo(Long id) {
+		this.id = id;
+	}
+	public Todo() {
+		super();
+	}
+	
 
 	public Long getId() {
 		return id;
@@ -73,6 +83,14 @@ public class Todo extends PanacheEntityBase {
 	public void setDataCriacao(LocalDateTime dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
+	public List<TodoStatus> getStatus() {
+		return status;
+	}
+	public void setStatus(List<TodoStatus> status) {
+		this.status = status;
+	}
+	
+	
 	
 	
 	

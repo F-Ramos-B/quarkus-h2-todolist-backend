@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 
 import org.eclipse.microprofile.opentracing.Traced;
+import org.hibernate.annotations.CreationTimestamp;
 
 import br.com.stefanini.maratonadev.dao.TodoDao;
 import br.com.stefanini.maratonadev.dto.TodoDto;
@@ -53,11 +54,15 @@ public class TodoService {
 		Todo todo = TodoParser.get().entidade(todoDto);
 		validar(todo);
 		
-		todo.setDataCriacao(LocalDateTime.now());
+		/**
+		 * logica abaixo substituida por 
+		 * @CreationTimestamp no modelo
+		 */
+		//todo.setDataCriacao(LocalDateTime.now());
 		//chamada da dao
 		Long id = dao.inserir(todo);
 		
-//		statusService.inserir(id,StatusEnum.TODO);
+		statusService.inserir(id,StatusEnum.TODO);
 	}
 	
 	public List<TodoDto> listar() {
@@ -88,6 +93,7 @@ public class TodoService {
 		Todo todoBanco = buscarPorId(id);
 		todoBanco.setNome(todo.getNome());
 		dao.atualizar(todoBanco);
+		statusService.atualizar(id, dto.getStatus());
 	}
 	
 	private Todo buscarPorId(Long id) {

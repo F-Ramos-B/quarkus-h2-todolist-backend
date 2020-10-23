@@ -21,9 +21,13 @@ public class TodoParser {
 	public TodoDto dto(Todo entidade) {
 		
 		TodoDto dto = new TodoDto();
+		
 		dto.setId(entidade.getId());
 		dto.setNome(entidade.getNome());
 		dto.setDataCriacao(entidade.getDataCriacao());
+		
+		dto.setStatus(entidade.getStatus()
+				.get(0).toString());
 		
 		return dto;
 	}
