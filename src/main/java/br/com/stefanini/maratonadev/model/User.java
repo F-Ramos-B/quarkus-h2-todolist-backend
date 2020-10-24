@@ -1,5 +1,6 @@
 package br.com.stefanini.maratonadev.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -49,5 +51,9 @@ public class User extends PanacheEntityBase {
 	@Roles
 	@Column(name = "permissao", nullable = false)
 	private String permissao;
+	
+	@CreationTimestamp
+	@Column(name = "dataCriacao", nullable = false, updatable = false)
+	private LocalDateTime dataCriacao;
 
 }

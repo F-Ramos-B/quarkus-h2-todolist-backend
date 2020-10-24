@@ -1,6 +1,9 @@
 package br.com.stefanini.maratonadev.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import javax.json.bind.annotation.JsonbDateFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +22,8 @@ public class UserDTO implements Serializable {
 	private String email;
 	private String senha;
 	private String permissao;
+	
+	@JsonbDateFormat("dd/MM/yyyy HH:mm")
+	private LocalDateTime dataCriacao;
 
 }

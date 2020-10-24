@@ -12,15 +12,20 @@ import br.com.stefanini.maratonadev.model.User;
 import br.com.stefanini.maratonadev.model.parser.UserParser;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 
 @RequestScoped
 public class UserDAO {
+	
+	private Sort getSortData() {
+		return Sort.by("dataCriacao");
+	}
 	
 	public User buscarUsuarioPorEmail(String email) {
 		return User.find("email", email).firstResult();
 	}
 	
-	public User buscarUsuarioPorId(UUID id) {	
+	public User buscarUsuarioPorId(UUID id) {
 		return User.findById(id);
 	}
 	
@@ -30,15 +35,15 @@ public class UserDAO {
 	}
 	
 	public List<User> consultarTudo() {
-		return User.listAll();
+		return User.listAll(this.getSortData());
 	}
 	
 	public PaginadoDTO<UserDTO> consultarPaginado(FiltroPaginacaoDTO filtro) {
-		PanacheQuery<User> usuarios = User.findAll();
+		PanacheQuery<User> usuarios = User.findAll(this.getSortData());
 		
 		List<User> usuariosPaginados = usuarios.page(Page.of(filtro.getPageNumber(), filtro.getPageSize())).list();
 		
-		return new PaginadoDTO<>(usuarios.count(), UserParser.get().toDTOList(usuariosPaginados));
+		return new PaginadoDTO<>(usuarios.count(), usuarios.pageCount(), UserParser.get().toDTOList(usuariosPaginados));
 	}
 
 	public void removerUsuario(UUID id) {

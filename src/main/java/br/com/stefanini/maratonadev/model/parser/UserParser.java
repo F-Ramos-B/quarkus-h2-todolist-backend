@@ -30,6 +30,7 @@ public class UserParser extends BaseParser<User, UserDTO> {
 		}
 		entidade.setEmail(dto.getEmail());
 		entidade.setSenha(dto.getSenha());
+		entidade.setDataCriacao(dto.getDataCriacao());
 		
 		return entidade;
 	}
@@ -45,6 +46,7 @@ public class UserParser extends BaseParser<User, UserDTO> {
 		dto.setPermissao(entidade.getPermissao());
 		dto.setEmail(entidade.getEmail());
 		dto.setSenha(entidade.getSenha());
+		dto.setDataCriacao(entidade.getDataCriacao());
 		if (StringUtils.isNotBlank(entidade.getPermissao())) {
 			dto.setIdRole(EnumPerfil.valueOf(entidade.getPermissao()).getId());			
 		}
