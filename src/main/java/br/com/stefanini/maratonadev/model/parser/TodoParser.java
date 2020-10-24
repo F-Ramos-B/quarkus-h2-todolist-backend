@@ -1,6 +1,6 @@
 package br.com.stefanini.maratonadev.model.parser;
 
-import br.com.stefanini.maratonadev.dto.TodoDto;
+import br.com.stefanini.maratonadev.dto.TodoDTO;
 import br.com.stefanini.maratonadev.model.Todo;
 
 public class TodoParser {
@@ -8,7 +8,7 @@ public class TodoParser {
 	public static TodoParser get() {
 		return new TodoParser();
 	}
-	public Todo entidade(TodoDto dto) {
+	public Todo entidade(TodoDTO dto) {
 		Todo entidade = new Todo();
 		
 		entidade.setId(dto.getId());
@@ -18,9 +18,9 @@ public class TodoParser {
 		return entidade;
 	}
 	
-	public TodoDto dto(Todo entidade) {
+	public TodoDTO dto(Todo entidade) {
 		
-		TodoDto dto = new TodoDto();
+		TodoDTO dto = new TodoDTO();
 		
 		dto.setId(entidade.getId());
 		dto.setNome(entidade.getNome());

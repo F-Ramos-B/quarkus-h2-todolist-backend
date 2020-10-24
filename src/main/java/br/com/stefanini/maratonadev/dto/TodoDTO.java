@@ -4,25 +4,25 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.json.bind.annotation.JsonbDateFormat;
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-public class TodoDto  implements Serializable{
+public class TodoDTO implements Serializable {
+
+	private static final long serialVersionUID = -9067592608684415105L;
 
 	private Long id;
-	
+
 	@NotNull(message = "Nome é Obrigatorio")
 	@NotBlank(message = "Não é permito nome vazio")
-	@Length(min = 3, max = 250, message = "Não é permido nomes "
-			+ "menores que 3 caracteres ou maiores que 250")
+	@Length(min = 3, max = 250, message = "Não é permido nomes " + "menores que 3 caracteres ou maiores que 250")
 	private String nome;
-	
+
 	@JsonbDateFormat("dd/MM/yyyy HH:mm")
 	private LocalDateTime dataCriacao;
-	
+
 	private String status;
 
 	public Long getId() {
@@ -56,9 +56,5 @@ public class TodoDto  implements Serializable{
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	
-	
-	
-	
+
 }

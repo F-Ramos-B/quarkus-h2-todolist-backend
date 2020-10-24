@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 
-public class TodoStatusDto {
+public class TodoStatusDTO {
 
 	private Long id;
-	
+
 	@JsonbDateFormat("dd/MM/yyyy HH:mm")
 	private LocalDateTime data;
-	
+
 	private String status;
-	
+
 	private String nomeUsuario;
 
 	public Long getId() {
@@ -46,8 +46,5 @@ public class TodoStatusDto {
 	public void setNomeUsuario(String nomeUsuario) {
 		this.nomeUsuario = nomeUsuario;
 	}
-	
-	
-	
-	
+
 }

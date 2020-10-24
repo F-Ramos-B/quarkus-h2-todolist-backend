@@ -1,6 +1,6 @@
 package br.com.stefanini.maratonadev.model.parser;
 
-import br.com.stefanini.maratonadev.dto.TodoStatusDto;
+import br.com.stefanini.maratonadev.dto.TodoStatusDTO;
 import br.com.stefanini.maratonadev.model.TodoStatus;
 
 public class TodoStatusParser {
@@ -9,8 +9,8 @@ public class TodoStatusParser {
 		return new TodoStatusParser();
 	}
 	
-	public TodoStatusDto dto(TodoStatus entidade) {
-		TodoStatusDto dto = new TodoStatusDto();
+	public TodoStatusDTO dto(TodoStatus entidade) {
+		TodoStatusDTO dto = new TodoStatusDTO();
 		dto.setId(entidade.getId());
 		dto.setData(entidade.getData());
 		dto.setStatus(entidade.getStatus().name());
