@@ -21,6 +21,9 @@ import br.com.stefanini.maratonadev.model.parser.TodoStatusParser;
 public class TodoStatusService {
 	@Inject
 	TodoStatusDao dao;
+	
+	@Inject
+	UserService userService;
 
 	private void validar(TodoStatus todoStatus) {
 		if(StatusEnum
@@ -42,30 +45,24 @@ public class TodoStatusService {
 	}
 	
 	@Transactional(rollbackOn = Exception.class)
-	public void inserir(Long id, StatusEnum enumTexto) {
+	public void inserir(Long id, StatusEnum enumTexto, String emailLogado) {
 		TodoStatus status = new TodoStatus(enumTexto);
 		status.setTodo(new Todo(id));
-		/**
-		 * inserir usuario manual (temporario) 
-		 * enquanto estamos autenticação
-		 */
-		User userTest = new User(1L);
-//		userTest.persist();
-		
-//		if(userTest.isPersistent()) {
-		//	System.out.println("Estou no Banco");
-		//}
-//		status.setUser();
+		status.setUser(userService.buscarUsuarioPorEmail(emailLogado));
 		validar(status);
 		dao.inserir(status);
 		
 	}
 	@Transactional(rollbackOn = Exception.class)
-	public void atualizar(Long id, String enumTexto) {
+	public void atualizar(Long id, String enumTexto, String emailLogado) {
 		TodoStatus statusTela = new TodoStatus(StatusEnum.valueOf(enumTexto));
 		statusTela.setTodo(new Todo(id));
 		TodoStatus statusBanco = dao.buscarStatusPorTarefa(id).get(0);
 		validarAtualizacao(statusBanco, statusTela);
+		
+		statusTela.setTodo(new Todo(id));
+		statusTela.setUser(userService.buscarUsuarioPorEmail(emailLogado));
+		
 		dao.inserir(statusTela);
 	}
 	

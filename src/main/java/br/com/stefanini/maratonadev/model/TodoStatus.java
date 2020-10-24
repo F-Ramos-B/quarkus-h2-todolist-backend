@@ -41,6 +41,7 @@ public class TodoStatus extends PanacheEntity {
 	private User user;
 	
 	
+	
 	TodoStatus(){
 		super();
 	}
@@ -91,11 +92,6 @@ public class TodoStatus extends PanacheEntity {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
+
 	
 }

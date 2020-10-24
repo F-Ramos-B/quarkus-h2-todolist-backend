@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -16,9 +17,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -37,7 +40,7 @@ import io.quarkus.security.Authenticated;
 @Path("todo")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-
+@RolesAllowed({"USER","ADMIN"})
 public class TodoRest {
 	
 	@Inject
@@ -76,13 +79,13 @@ public class TodoRest {
 			schema = @Schema(implementation = TodoDto.class))
 			}
 	)
-	public Response incluir(TodoDto todo) {
+	public Response incluir(TodoDto todo, @Context SecurityContext securityContext) {
 		
 		Set<ConstraintViolation<TodoDto>> erros
 		= validator.validate(todo);
 		
 		if(erros.isEmpty()) {
-			service.inserir(todo);
+			service.inserir(todo,securityContext.getUserPrincipal().getName());
 		}else {
 			List<String> listaErros = erros.stream()
 			.map(ConstraintViolation::getMessage)
@@ -102,10 +105,9 @@ public class TodoRest {
 	
 	@DELETE
 	@Path("/{id}")
-	
+	@RolesAllowed("ADMIN")
 	@Operation(summary = "Excluir uma tarefa",
 	description = "Excluir uma tarefa")
-	
 	@APIResponse(responseCode = "202",
 	description = "tarefa",
 	content = {
@@ -150,8 +152,9 @@ public class TodoRest {
 			schema = @Schema(implementation = TodoDto.class))
 			}
 	)
-	public Response atualizar(@PathParam("id") Long id, TodoDto todo) {
-		service.atualizar(id, todo);
+	public Response atualizar(@PathParam("id") Long id, TodoDto todo,
+			@Context SecurityContext securityContext) {
+		service.atualizar(id, todo, securityContext.getUserPrincipal().getName());
 		return Response
 				.status(Response.Status.OK)
 				.build();

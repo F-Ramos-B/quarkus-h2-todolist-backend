@@ -12,6 +12,8 @@ public class TodoStatusDto {
 	private LocalDateTime data;
 	
 	private String status;
+	
+	private String nomeUsuario;
 
 	public Long getId() {
 		return id;
@@ -36,6 +38,16 @@ public class TodoStatusDto {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public String getNomeUsuario() {
+		return nomeUsuario;
+	}
+
+	public void setNomeUsuario(String nomeUsuario) {
+		this.nomeUsuario = nomeUsuario;
+	}
+	
+	
 	
 	
 }
