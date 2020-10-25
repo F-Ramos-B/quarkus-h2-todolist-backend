@@ -83,10 +83,10 @@ public class TodoRest {
 
 	@DELETE
 	@Path("/{id}")
-	@RolesAllowed("ADMIN")
 	@Operation(summary = "Excluir uma tarefa", description = "Excluir uma tarefa")
 	@APIResponse(responseCode = "202", description = "tarefa", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TodoDTO.class)) })
+	@RolesAllowed({ EnumPerfil.Roles.ADMIN })
 	public Response excluir(@PathParam("id") Long id) {
 		service.excluir(id);
 		return Response.status(Response.Status.ACCEPTED).build();
