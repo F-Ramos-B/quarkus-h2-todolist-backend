@@ -52,7 +52,6 @@ public class UserService {
 		entidade.setSenha(usuario.getSenha());
 		entidade.setEmail(usuario.getEmail());
 		entidade.setNome(usuario.getNome());
-		System.out.println("permissao: " + usuario.getPermissao());
 		entidade.setPermissao(usuario.getPermissao());
 		
 		userDAO.persist(entidade);
