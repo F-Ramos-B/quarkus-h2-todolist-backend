@@ -6,7 +6,7 @@ import java.util.UUID;
 import javax.enterprise.context.RequestScoped;
 
 import br.com.stefanini.maratonadev.dto.FiltroPaginacaoDTO;
-import br.com.stefanini.maratonadev.dto.PaginadoDTO;
+import br.com.stefanini.maratonadev.dto.ResultadoPaginadoDTO;
 import br.com.stefanini.maratonadev.dto.UserDTO;
 import br.com.stefanini.maratonadev.model.User;
 import br.com.stefanini.maratonadev.model.parser.UserParser;
@@ -38,12 +38,12 @@ public class UserDAO {
 		return User.listAll(this.getSortData());
 	}
 	
-	public PaginadoDTO<UserDTO> consultarPaginado(FiltroPaginacaoDTO filtro) {
+	public ResultadoPaginadoDTO<UserDTO> consultarPaginado(FiltroPaginacaoDTO filtro) {
 		PanacheQuery<User> usuarios = User.findAll(this.getSortData());
 		
 		List<User> usuariosPaginados = usuarios.page(Page.of(filtro.getPageNumber(), filtro.getPageSize())).list();
 		
-		return new PaginadoDTO<>(usuarios.count(), usuarios.pageCount(), UserParser.get().toDTOList(usuariosPaginados));
+		return new ResultadoPaginadoDTO<>(usuarios.count(), usuarios.pageCount(), UserParser.get().toDTOList(usuariosPaginados));
 	}
 
 	public void removerUsuario(UUID id) {

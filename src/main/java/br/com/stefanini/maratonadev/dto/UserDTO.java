@@ -23,7 +23,7 @@ public class UserDTO implements Serializable {
 	private String senha;
 	private String permissao;
 	
-	@JsonbDateFormat("dd/MM/yyyy HH:mm")
+	@JsonbDateFormat("dd/MM/yyyy HH:mm:ss")
 	private LocalDateTime dataCriacao;
 
 }

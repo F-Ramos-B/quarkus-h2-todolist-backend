@@ -10,16 +10,19 @@ import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotFoundException;
 
 import br.com.stefanini.maratonadev.dao.TodoStatusDAO;
+import br.com.stefanini.maratonadev.dto.FiltroPaginacaoDTO;
+import br.com.stefanini.maratonadev.dto.ResultadoPaginadoDTO;
 import br.com.stefanini.maratonadev.dto.TodoStatusDTO;
 import br.com.stefanini.maratonadev.model.Todo;
 import br.com.stefanini.maratonadev.model.TodoStatus;
+import br.com.stefanini.maratonadev.model.User;
 import br.com.stefanini.maratonadev.model.dominio.EnumStatus;
 import br.com.stefanini.maratonadev.model.parser.TodoStatusParser;
 
 @RequestScoped
 public class TodoStatusService {
 	@Inject
-	TodoStatusDAO dao;
+	TodoStatusDAO todoStatusDAO;
 
 	@Inject
 	UserService userService;
@@ -39,31 +42,33 @@ public class TodoStatusService {
 	}
 
 	@Transactional(rollbackOn = Exception.class)
-	public void inserir(Long id, EnumStatus enumTexto, String emailLogado) {
+	public void inserir(Long id, EnumStatus enumTexto, User usuario) {
 		TodoStatus status = new TodoStatus(enumTexto);
 		status.setTodo(new Todo(id));
-		status.setUser(userService.buscarUsuarioPorEmail(emailLogado));
+		status.setUser(usuario);
 		validar(status);
-		dao.inserir(status);
-
+		todoStatusDAO.inserir(status);
 	}
 
 	@Transactional(rollbackOn = Exception.class)
 	public void atualizar(Long id, String enumTexto, String emailLogado) {
 		TodoStatus statusTela = new TodoStatus(EnumStatus.valueOf(enumTexto));
 		statusTela.setTodo(new Todo(id));
-		TodoStatus statusBanco = dao.buscarStatusPorTarefa(id).get(0);
+		TodoStatus statusBanco = todoStatusDAO.buscarStatusPorTarefa(id).get(0);
 		validarAtualizacao(statusBanco, statusTela);
 
 		statusTela.setTodo(new Todo(id));
 		statusTela.setUser(userService.buscarUsuarioPorEmail(emailLogado));
 
-		dao.inserir(statusTela);
+		todoStatusDAO.inserir(statusTela);
 	}
 
 	public List<TodoStatusDTO> buscarTodosStatusPorTarefa(Long idTarefa) {
-		List<TodoStatus> statusBanco = dao.buscarStatusPorTarefa(idTarefa);
-		return statusBanco.stream().map(TodoStatusParser.get()::dto).collect(Collectors.toList());
+		List<TodoStatus> statusBanco = todoStatusDAO.buscarStatusPorTarefa(idTarefa);
+		return statusBanco.stream().map(TodoStatusParser.get()::toDTO).collect(Collectors.toList());
+	}
 
+	public ResultadoPaginadoDTO<TodoStatusDTO> listarHistoricoPaginado(FiltroPaginacaoDTO filtro) {
+		return todoStatusDAO.buscarHistoricoPaginado(filtro);
 	}
 }

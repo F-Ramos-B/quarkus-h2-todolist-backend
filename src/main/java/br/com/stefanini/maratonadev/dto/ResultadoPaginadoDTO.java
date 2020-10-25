@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaginadoDTO<T> implements Serializable {
+public class ResultadoPaginadoDTO<T> implements Serializable {
 
 	private static final long serialVersionUID = -5092536974327831553L;
 	

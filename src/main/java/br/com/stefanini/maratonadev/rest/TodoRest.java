@@ -1,9 +1,9 @@
 package br.com.stefanini.maratonadev.rest;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -29,6 +29,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import br.com.stefanini.maratonadev.dto.TodoDTO;
+import br.com.stefanini.maratonadev.dto.TodoGroupDTO;
 import br.com.stefanini.maratonadev.model.dominio.EnumPerfil;
 import br.com.stefanini.maratonadev.service.TodoService;
 
@@ -45,33 +46,36 @@ public class TodoRest {
 	Validator validator;
 
 	@GET
-	@Path("")
-	@Operation(summary = "Listar Listas a fazer", description = "Retorna uma lista de  Todo.class")
+	@Operation(summary = "Listar tarefas a fazer", description = "Retorna uma lista de Todo.class")
 	@APIResponse(responseCode = "200", description = "lista de tarefas", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TodoDTO.class, type = SchemaType.ARRAY)) })
+	@PermitAll
 	public Response listar() {
-
 		return Response.status(Response.Status.OK).entity(service.listar()).build();
+	}
+	
+	@GET
+	@Path("/agrupado")
+	@Operation(summary = "Buscar agrupado por status", description = "Buscar agrupado por status")
+	@APIResponse(responseCode = "200", description = "tarefa", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = TodoGroupDTO.class, type = SchemaType.OBJECT)) })
+	@PermitAll
+	public Response buscarAgrupado() {
+		return Response.status(Response.Status.OK).entity(service.listarAgrupado()).build();
 	}
 
 	@POST
-	@Path("")
 	@Operation(summary = "Incluir uma tarefa", description = "Incluir uma tarefa")
 	@APIResponse(responseCode = "201", description = "tarefa", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TodoDTO.class)) })
 	public Response incluir(TodoDTO todo, @Context SecurityContext securityContext) {
 
 		Set<ConstraintViolation<TodoDTO>> erros = validator.validate(todo);
-
+		
 		if (erros.isEmpty()) {
 			service.inserir(todo, securityContext.getUserPrincipal().getName());
 		} else {
-			List<String> listaErros = erros.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
-//			listaErros.forEach(i -> {
-//				System.out.println(i);
-//			});
-			throw new NotFoundException(listaErros.get(0));
-
+			throw new NotFoundException(erros.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")).toString());
 		}
 
 		return Response.status(Response.Status.CREATED).build();
@@ -96,14 +100,23 @@ public class TodoRest {
 	public Response buscarPorID(@PathParam("id") Long id) {
 		return Response.status(Response.Status.OK).entity(service.buscar(id)).build();
 	}
-
+	
 	@PUT
-	@Path("{id}")
 	@Operation(summary = "Editar uma tarefa com base no ID", description = "Editar uma tarefa com base no ID")
 	@APIResponse(responseCode = "200", description = "tarefa", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TodoDTO.class)) })
-	public Response atualizar(@PathParam("id") Long id, TodoDTO todo, @Context SecurityContext securityContext) {
-		service.atualizar(id, todo, securityContext.getUserPrincipal().getName());
+	public Response atualizar(TodoDTO todo, @Context SecurityContext securityContext) {
+		service.atualizar(todo, securityContext.getUserPrincipal().getName());
+		return Response.status(Response.Status.OK).build();
+	}
+	
+	@PUT
+	@Path("/{id}/{idStatus}")
+	@Operation(summary = "Editar status", description = "Editar uma tarefa com base no ID")
+	@APIResponse(responseCode = "200", description = "tarefa", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = TodoDTO.class)) })
+	public Response atualizar(@PathParam("id") Long id, @PathParam("idStatus") Long idStatus, @Context SecurityContext securityContext) {
+		service.atualizarStatus(id, idStatus, securityContext.getUserPrincipal().getName());
 		return Response.status(Response.Status.OK).build();
 	}
 }

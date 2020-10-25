@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 
 import br.com.stefanini.maratonadev.dao.UserDAO;
 import br.com.stefanini.maratonadev.dto.FiltroPaginacaoDTO;
-import br.com.stefanini.maratonadev.dto.PaginadoDTO;
+import br.com.stefanini.maratonadev.dto.ResultadoPaginadoDTO;
 import br.com.stefanini.maratonadev.dto.PermissaoDTO;
 import br.com.stefanini.maratonadev.dto.UserDTO;
 import br.com.stefanini.maratonadev.model.User;
@@ -28,7 +28,7 @@ public class UserService {
 		return UserParser.get().toDTOList(userDAO.consultarTudo());
 	}
 	
-	public PaginadoDTO<UserDTO> consultarPaginado(FiltroPaginacaoDTO filtro) {
+	public ResultadoPaginadoDTO<UserDTO> consultarPaginado(FiltroPaginacaoDTO filtro) {
 		return userDAO.consultarPaginado(filtro);
 	}
 	

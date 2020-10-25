@@ -14,7 +14,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import br.com.stefanini.maratonadev.model.dominio.EnumStatus;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "todostatus")
 public class TodoStatus extends PanacheEntity {
@@ -34,59 +42,22 @@ public class TodoStatus extends PanacheEntity {
 	@ManyToOne(optional = false)
 	private User user;
 
-	TodoStatus() {
-		super();
-	}
-
-	public TodoStatus(EnumStatus statusEnum) {
-		this.status = statusEnum;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public EnumStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(EnumStatus status) {
-		this.status = status;
-	}
-
-	public LocalDateTime getData() {
-		return data;
-	}
-
-	public void setData(LocalDateTime data) {
-		this.data = data;
-	}
-
-	public Todo getTodo() {
-		return todo;
-	}
-
-	public void setTodo(Todo todo) {
-		this.todo = todo;
-	}
-
 	@Override
 	public String toString() {
 		// TODO
 		return status.name();
-
 	}
-
-	public User getUser() {
-		return user;
+	
+	public Long getId() {
+		return this.id;
 	}
-
-	public void setUser(User user) {
-		this.user = user;
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public TodoStatus(EnumStatus statusEnum) {
+		this.status = statusEnum;
 	}
 
 }

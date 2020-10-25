@@ -22,5 +22,8 @@ public class FiltroPaginacaoDTO implements Serializable {
 	
 	@QueryParam("pageNumber")
 	private Integer pageNumber;
+	
+	@QueryParam("id")
+	private Long id;
 
 }

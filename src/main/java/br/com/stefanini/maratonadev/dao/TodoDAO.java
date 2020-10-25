@@ -23,15 +23,7 @@ public class TodoDAO {
 	EntityManager em;
 
 	@Transactional
-	/**
-	 * Inseri um TODO e retorna o ID criado
-	 * 
-	 * @param todo
-	 * @return
-	 */
 	public Long inserir(Todo todo) {
-		String nomeSql = "INSERIR_TODO";
-//		inserirOuAtualizar(nomeSql, todo);
 		todo.persistAndFlush();
 		return todo.getId();
 	}

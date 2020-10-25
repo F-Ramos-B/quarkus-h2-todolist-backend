@@ -22,7 +22,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import br.com.stefanini.maratonadev.dto.FiltroPaginacaoDTO;
-import br.com.stefanini.maratonadev.dto.PaginadoDTO;
+import br.com.stefanini.maratonadev.dto.ResultadoPaginadoDTO;
 import br.com.stefanini.maratonadev.dto.PermissaoDTO;
 import br.com.stefanini.maratonadev.dto.UserDTO;
 import br.com.stefanini.maratonadev.model.dominio.EnumPerfil;
@@ -31,6 +31,7 @@ import br.com.stefanini.maratonadev.service.UserService;
 @Path("user")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@RolesAllowed({ EnumPerfil.Roles.ADMIN, EnumPerfil.Roles.USER })
 public class UserRest {
 
 	@Inject
@@ -59,9 +60,8 @@ public class UserRest {
 	@Path("/paginado")
 	@Operation(summary = "Listar roles", description = "Listar roles")
 	@APIResponse(responseCode = "200", description = "Roles", content = {
-			@Content(mediaType = "application/json", schema = @Schema(implementation = PaginadoDTO.class, type = SchemaType.ARRAY)) })
-	@PermitAll
-	public Response listarPermissoes(@BeanParam FiltroPaginacaoDTO filtro) {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = ResultadoPaginadoDTO.class, type = SchemaType.ARRAY)) })
+	public Response consultarPaginado(@BeanParam FiltroPaginacaoDTO filtro) {
 		return Response.status(Response.Status.OK).entity(userService.consultarPaginado(filtro)).build();
 	}
 	

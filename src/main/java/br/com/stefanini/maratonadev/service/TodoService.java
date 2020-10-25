@@ -1,6 +1,7 @@
 package br.com.stefanini.maratonadev.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -13,7 +14,9 @@ import org.eclipse.microprofile.opentracing.Traced;
 
 import br.com.stefanini.maratonadev.dao.TodoDAO;
 import br.com.stefanini.maratonadev.dto.TodoDTO;
+import br.com.stefanini.maratonadev.dto.TodoGroupDTO;
 import br.com.stefanini.maratonadev.model.Todo;
+import br.com.stefanini.maratonadev.model.User;
 import br.com.stefanini.maratonadev.model.dominio.EnumStatus;
 import br.com.stefanini.maratonadev.model.parser.TodoParser;
 
@@ -22,80 +25,80 @@ import br.com.stefanini.maratonadev.model.parser.TodoParser;
 public class TodoService {
 
 	@Inject
-	TodoDAO dao;
+	TodoDAO todoDAO;
 
 	@Inject
 	TodoStatusService statusService;
 
 	@Inject
 	UserService userService;
+	
+	native float getVariance() throws Exception;
 
 	private void validar(Todo todo) {
-		// validar regra de negocio
-
-		if (dao.isnomeRepetido(todo.getNome())) {
+		if (todoDAO.isnomeRepetido(todo.getNome())) {
 			throw new NotFoundException();
 		}
-//		Agora o Hibernate Validator cuida disso
-//		if(todo.getNome() == null) {
-//			throw new NotFoundException();
-//		}
 	}
 
 	@Transactional(rollbackOn = Exception.class)
-	/**
-	 * regra de criação Toda tarefa criada vem por padrão na lista TODO e com a data
-	 * corrente
-	 */
 	public void inserir(@Valid TodoDTO todoDto, String emailLogado) {
-		// validação
-		Todo todo = TodoParser.get().entidade(todoDto);
+		Todo todo = TodoParser.get().toEntity(todoDto);
 		validar(todo);
-
-		/**
-		 * logica abaixo substituida por
-		 * 
-		 * @CreationTimestamp no modelo
-		 */
-		// todo.setDataCriacao(LocalDateTime.now());
-		// chamada da dao
-
-		Long id = dao.inserir(todo);
-
-		statusService.inserir(id, EnumStatus.TODO, emailLogado);
+		User usuario = userService.buscarUsuarioPorEmail(emailLogado);
+		Long id = todoDAO.inserir(todo);
+		statusService.inserir(id, EnumStatus.TODO, usuario);
 	}
 
 	public List<TodoDTO> listar() {
-		return dao.listar().stream().map(TodoParser.get()::dto).collect(Collectors.toList());
+		return TodoParser.get().toDTOList(todoDAO.listar());
+	}
+	
+	public TodoGroupDTO listarAgrupado() {
+		TodoGroupDTO dto = new TodoGroupDTO();
+		List<TodoDTO> listar = this.listar();
+		
+		Map<Long, List<TodoDTO>> grouped = listar.stream().collect(Collectors.groupingBy(TodoDTO::getIdStatus));
+		
+		dto.setTarefas(grouped);
+		dto.setTotal(listar.size());
+		return dto;
 	}
 
 	public void excluir(Long id) {
-		// DESAFIO: VALIDAR SE ID é valido
-		if (dao.buscarPorId(id) == null) {
+		if (todoDAO.buscarPorId(id) == null) {
 			throw new NotFoundException();
 		}
-		dao.excluir(id);
+		todoDAO.excluir(id);
 	}
 
 	public TodoDTO buscar(Long id) {
-		return TodoParser.get().dto(buscarPorId(id));
+		return TodoParser.get().toDTO(buscarPorId(id));
 	}
 
 	@Transactional(rollbackOn = Exception.class)
-	public void atualizar(Long id, TodoDTO dto, String emailLogado) {
-		Todo todo = TodoParser.get().entidade(dto);
-		Todo todoBanco = buscarPorId(id);
+	public void atualizar(TodoDTO dto, String emailLogado) {
+		Todo todo = TodoParser.get().toEntity(dto);
+		Todo todoBanco = buscarPorId(dto.getId());
+		
 		todoBanco.setNome(todo.getNome());
-		dao.atualizar(todoBanco);
-		statusService.atualizar(id, dto.getStatus(), emailLogado);
+		todoDAO.atualizar(todoBanco);
+		statusService.atualizar(dto.getId(), dto.getStatus(), emailLogado);
 	}
 
 	private Todo buscarPorId(Long id) {
-		Todo todo = dao.buscarPorId(id);
+		Todo todo = todoDAO.buscarPorId(id);
 		if (todo == null) {
 			throw new NotFoundException();
 		}
 		return todo;
+	}
+
+	public void atualizarStatus(Long id, Long idStatus, String name) {
+		Todo todoBanco = buscarPorId(id);
+		todoDAO.atualizar(todoBanco);
+		statusService.atualizar(id, EnumStatus.valueOfId(idStatus).getTitulo(), name);
+		
 	}
 
 }
