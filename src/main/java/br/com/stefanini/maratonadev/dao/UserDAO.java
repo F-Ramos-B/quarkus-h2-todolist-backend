@@ -17,8 +17,8 @@ import io.quarkus.panache.common.Sort;
 @RequestScoped
 public class UserDAO {
 	
-	private Sort getSortData() {
-		return Sort.by("dataCriacao");
+	private Sort getSortPorNome() {
+		return Sort.by("nome");
 	}
 	
 	public User buscarUsuarioPorEmail(String email) {
@@ -35,11 +35,11 @@ public class UserDAO {
 	}
 	
 	public List<User> consultarTudo() {
-		return User.listAll(this.getSortData());
+		return User.listAll(this.getSortPorNome());
 	}
 	
 	public ResultadoPaginadoDTO<UserDTO> consultarPaginado(FiltroPaginacaoDTO filtro) {
-		PanacheQuery<User> usuarios = User.findAll(this.getSortData());
+		PanacheQuery<User> usuarios = User.findAll(this.getSortPorNome());
 		
 		List<User> usuariosPaginados = usuarios.page(Page.of(filtro.getPageNumber(), filtro.getPageSize())).list();
 		
